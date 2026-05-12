@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+
+
+.env
+
+data/user_data.json
+
+
+*.db
+*.sqlite3
+
+
+.venv/
+.vscode/
