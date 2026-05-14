@@ -27,11 +27,48 @@ Routing bukan sekadar memindah tugas, tapi memastikan **presisi dan efisiensi**.
 
 Pemisahan peran yang ketat untuk menjaga stabilitas sistem:
 
-1.  **MANAGER_ORCHESTRATOR**: Pengambil keputusan tertinggi, mengawasi seluruh aliran task, dan menangani eskalasi.
+1.  **MANAGER_ORCHESTRATOR**: Pengambil keputusan tertinggi, mengawasi seluruh aliran task.
 2.  **TASK_AGENT_OPTIMIZER**: Fokus pada efisiensi eksekusi task dan perbaikan alur kerja agent.
-3.  **PROMPT_ENGINEERING & PROMPT_OPTIMIZER**: Bertanggung jawab atas kualitas instruksi AI, struktur input/output, dan efektivitas prompt.
-4.  **ARCHITECTURE_GUARDIAN & ARCHITECTURE_WORKSPACE**: Penjaga struktur kode, integritas file, dan konsistensi arsitektur global.
-5.  **UX_RETENTION & INTERACTION_DESIGNER**: Penjaga pengalaman pengguna, psikologi retensi, dan kualitas interaksi Telegram.
+3.  **PROMPT_ENGINEERING & PROMPT_OPTIMIZER**: Bertanggung jawab atas kualitas instruksi AI dan efektivitas prompt.
+4.  **ARCHITECTURE_GUARDIAN**: Penjaga struktur kode, keamanan, dan konsistensi arsitektur global.
+5.  **BACKEND_SPECIALIST (The Thinker)**: Penanggung jawab logic, reasoning, dan desain sistem backend.
+6.  **BACKEND_EXECUTOR (The Executor)**: Pelaksana implementasi kode, integrasi, dan perbaikan bug backend.
+7.  **UX_RETENTION & INTERACTION_DESIGNER**: Penjaga pengalaman pengguna dan kualitas interaksi Telegram.
+
+---
+
+## BACKEND ROUTING DOCTRINE: THINKER VS EXECUTOR
+
+Untuk task backend, Orchestrator wajib mengikuti alur pemisahan reasoning dan eksekusi:
+
+### 1. The Reasoning Layer (BACKEND_SPECIALIST)
+Gunakan agent ini jika task melibatkan:
+- Perancangan fitur baru yang belum memiliki pola di codebase.
+- Perubahan logic bisnis yang kompleks.
+- Desain skema database atau struktur data JSON.
+- Analisis kegagalan sistem yang penyebabnya tidak jelas (Root Cause Analysis).
+- Integrasi API pihak ketiga yang membutuhkan mapping logic.
+
+### 2. The Execution Layer (BACKEND_EXECUTOR)
+Gunakan agent ini jika task melibatkan:
+- Implementasi handler atau service berdasarkan instruksi/desain yang sudah ada.
+- Perbaikan bug teknis (syntax error, type error, missing imports).
+- Migrasi database sederhana sesuai skema dari Specialist.
+- Penulisan unit test atau integration test.
+- Refactoring kode minor tanpa merubah logic utama.
+
+---
+
+## BACKEND ROUTING RULES
+
+| Kondisi Task | Agent Utama | Agent Pendukung |
+| :--- | :--- | :--- |
+| Fitur Backend Baru (End-to-End) | BACKEND_SPECIALIST | BACKEND_EXECUTOR |
+| Bug Logic (Salah Perhitungan/Flow) | BACKEND_SPECIALIST | BACKEND_EXECUTOR |
+| Bug Teknis (Crash/Error) | BACKEND_EXECUTOR | - |
+| Integrasi API Baru | BACKEND_SPECIALIST | BACKEND_EXECUTOR |
+| Update Struktur Database | BACKEND_SPECIALIST | BACKEND_EXECUTOR |
+| Optimasi Performa Kode | BACKEND_EXECUTOR | TASK_AGENT_OPTIMIZER |
 
 ---
 
@@ -48,20 +85,19 @@ Setiap task harus memiliki satu pemilik utama (_Primary Owner_) pada satu waktu.
 
 ## ROUTING PRIORITY RULES
 
-Urutan prioritas dalam menangani task:
-
-1.  **Security & Stability**: Dikirim langsung ke **ARCHITECTURE_GUARDIAN**.
-2.  **Retention & UX Crises**: Dikirim langsung ke **UX_RETENTION**.
-3.  **Feature Implementation**: Diarahkan ke agent spesifik sesuai domain fiturnya.
-4.  **Refactoring & Optimization**: Diarahkan ke **TASK_AGENT_OPTIMIZER** atau **PROMPT_OPTIMIZER**.
+1.  **Security & Stability**: Langsung ke **ARCHITECTURE_GUARDIAN**.
+2.  **Retention & UX Crises**: Langsung ke **UX_RETENTION**.
+3.  **Backend Logic & Design**: Langsung ke **BACKEND_SPECIALIST**.
+4.  **Implementation & Bug Fix**: Langsung ke **BACKEND_EXECUTOR**.
+5.  **Refactoring & Optimization**: Diarahkan ke **TASK_AGENT_OPTIMIZER** atau **PROMPT_OPTIMIZER**.
 
 ---
 
 ## TASK CLASSIFICATION
 
-Kategorisasi task untuk mempermudah routing:
-
 - **Technical/Structural**: Domain **ARCHITECTURE_GUARDIAN**.
+- **Backend Reasoning**: Domain **BACKEND_SPECIALIST**.
+- **Backend Implementation**: Domain **BACKEND_EXECUTOR**.
 - **Interaction/UI**: Domain **INTERACTION_DESIGNER**.
 - **Logic/Efficiency**: Domain **TASK_AGENT_OPTIMIZER**.
 - **AI/Instructional**: Domain **PROMPT_ENGINEERING**.
@@ -72,65 +108,17 @@ Kategorisasi task untuk mempermudah routing:
 ## WHEN NOT TO ROUTE
 
 Jangan melakukan routing jika:
-
-- Task terlalu sepele (bisa diselesaikan langsung oleh agent saat ini tanpa melanggar batas).
-- Konteks tidak mencukupi untuk dipahami oleh agent penerima.
 - Terjadi _routing loop_ (task bolak-balik antar agent tanpa progres).
 - Agent tujuan sedang dalam status _overload_ atau kritis.
-
----
-
-## MULTI-AGENT WORKFLOW PRINCIPLES
-
-Alur kerja antar agent harus mengikuti pola:
-
-1.  **Request**: Orchestrator mengirimkan permintaan dengan instruksi jelas.
-2.  **Acceptance**: Agent mengonfirmasi pemahaman terhadap task.
-3.  **Execution**: Agent bekerja sesuai batas-batasnya (Boundaries).
-4.  **Validation**: Hasil divalidasi oleh agent yang meminta atau Orchestrator.
-5.  **Integration**: Hasil akhir digabungkan ke dalam codebase utama.
-
----
-
-## OVERLAP PREVENTION
-
-Cara menghindari tumpang tindih tanggung jawab:
-
-- **Boundary Check**: Setiap agent wajib memeriksa `SYSTEM_BOUNDARIES.md` sebelum memulai kerja.
-- **Ownership Conflict Resolution**: Jika dua agent merasa memiliki task yang sama, **MANAGER_ORCHESTRATOR** harus memberikan keputusan final dalam 1 langkah.
-- **Strict File Ownership**: Pastikan agent tidak menyentuh file yang ditandai `DO_NOT_TOUCH` atau milik domain agent lain tanpa izin.
+- Task melanggar **Thinker vs Executor separation** (misal: menyuruh Executor mendesain arsitektur sendiri).
 
 ---
 
 ## ORCHESTRATION ANTI-PATTERNS
 
-Hindari pola-pola buruk ini:
-
-- **Bystander Effect**: Mengirim task ke "semua agent" tanpa menunjuk penanggung jawab utama.
-- **The Telepathy Trap**: Berasumsi agent penerima tahu konteks tersembunyi yang tidak tertulis.
-- **Micromanagement**: Orchestrator terlalu mencampuri cara kerja internal agent.
-- **Ping-Pong Routing**: Task berpindah-pindah tanpa ada penyelesaian nyata.
-
----
-
-## ESCALATION RULES
-
-Kapan task harus dikembalikan ke **MANAGER_ORCHESTRATOR**:
-
-- Terjadi konflik antar agent yang tidak bisa diselesaikan secara mandiri.
-- Task melampaui kapasitas teknis atau hak akses agent saat ini.
-- Hasil pekerjaan agent terus-menerus gagal dalam tahap validasi.
-- Ada perubahan mendadak pada _Core Project Philosophy_.
-
----
-
-## HUMAN REVIEW PRINCIPLES
-
-Intervensi manusia (USER) diperlukan jika:
-
-- Terjadi _Deadlock_ pada sistem routing.
-- Task menyangkut keputusan strategis tingkat tinggi yang tidak ada di dokumentasi.
-- Terjadi error kritis sistemik yang mengancam integritas seluruh project.
+- **Backend Overload**: Mengirim semua task backend ke satu agent saja (biasanya Executor) sehingga reasoning terabaikan.
+- **The "Skip the Specialist" Trap**: Langsung menginstruksikan coding tanpa ada fase perancangan logic.
+- **Lost in Translation**: Executor merubah logic di tengah jalan tanpa konfirmasi ke Specialist/Orchestrator.
 
 ---
 
@@ -138,4 +126,4 @@ Intervensi manusia (USER) diperlukan jika:
 
 Eksosistem AI yang kuat bukan yang memiliki agent terpintar, tapi yang memiliki sistem routing paling disiplin.
 
-"Routing yang tepat adalah jembatan antara ide dan eksekusi. Tanpa routing yang disiplin, AI hanya akan menghasilkan kebisingan, bukan produk."
+"Pemisahan antara 'Berpikir' dan 'Melakukan' adalah kunci skalabilitas. Orchestrator yang baik tahu kapan harus meminta otak (Specialist) dan kapan harus meminta tangan (Executor)."

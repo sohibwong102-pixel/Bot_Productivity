@@ -9,6 +9,8 @@ Dokumen ini digunakan oleh:
 - MANAGER_ORCHESTRATOR
 - TASK_AGENT_OPTIMIZER
 - ARCHITECTURE_GUARDIAN
+- BACKEND_SPECIALIST
+- BACKEND_EXECUTOR
 - Seluruh ekosistem AI agent
 
 ---
@@ -38,7 +40,7 @@ Jika sebuah agent mulai melakukan pekerjaan yang bukan keahliannya, ia harus seg
 
 - **SHOULD handle**: Routing task, pemecahan task kompleks menjadi sub-task, validasi akhir, eskalasi ke USER.
 - **SHOULD NOT handle**: Penulisan kode teknis, desain prompt detail, optimasi UX mendalam.
-- **Routing Examples**: Menerima request fitur baru -> membagi ke Architecture dan Interaction.
+- **Routing Examples**: Menerima request fitur baru -> membagi ke Architecture, Backend Specialist, dan Interaction.
 - **Overlap Warning**: Jangan terjebak melakukan mikro-manajemen teknis yang seharusnya ditangani agent spesialis.
 
 ---
@@ -87,23 +89,35 @@ Jika sebuah agent mulai melakukan pekerjaan yang bukan keahliannya, ia harus seg
 - **SHOULD handle**: Review perubahan struktur file, penentuan pola desain kode, validasi keamanan sistem.
 - **SHOULD NOT handle**: Penulisan copy teks untuk user, optimasi tombol Telegram, desain prompt.
 - **Routing Examples**: Penambahan modul baru -> divalidasi oleh Architecture Guardian.
-- **Overlap Warning**: Sering overlap dengan Architecture Workspace; Guardian fokus pada _aturan_, Workspace fokus pada _eksekusi_.
+- **Overlap Warning**: Sering overlap dengan Backend Specialist; Guardian fokus pada _sistem global_, Specialist fokus pada _logika bisnis backend_.
 
 ---
 
-## 6. ARCHITECTURE_WORKSPACE
+## 6. BACKEND_SPECIALIST (The Thinker)
 
-**Core Responsibility**: Pelaksana teknis dan pengelola file fisik.
-**Primary Focus**: Penulisan kode, manajemen aset, dan implementasi struktur.
+**Core Responsibility**: Arsitek logika bisnis dan reasoning backend.
+**Primary Focus**: Desain algoritma, skema database, flow integrasi API, dan validasi logika.
 
-- **SHOULD handle**: Penulisan fungsi, pengelolaan file konfigurasi, integrasi API.
-- **SHOULD NOT handle**: Pengambilan keputusan arsitektur tingkat tinggi, desain interaksi user.
-- **Routing Examples**: Penambahan handler baru -> ditulis oleh Architecture Workspace.
-- **Overlap Warning**: Jangan melanggar batasan yang sudah ditetapkan oleh Architecture Guardian.
+- **SHOULD handle**: Perancangan workflow logic, struktur data (JSON/DB), penentuan library/tools backend, debugging akar masalah (Root Cause Analysis).
+- **SHOULD NOT handle**: Penulisan boilerplate code yang masif, manajemen aset UI, desain interaksi user.
+- **Routing Examples**: Request sistem reward baru -> Backend Specialist mendesain logic flow dan skema DB.
+- **Overlap Warning**: Jangan melakukan eksekusi file tanpa koordinasi dengan Backend Executor jika task melibatkan banyak file.
 
 ---
 
-## 7. UX_RETENTION
+## 7. BACKEND_EXECUTOR (The Executor)
+
+**Core Responsibility**: Mesin implementasi dan integrasi teknis backend.
+**Primary Focus**: Penulisan kode (Handlers, Models, Services), migrasi database, dan integrasi API pihak ketiga.
+
+- **SHOULD handle**: Implementasi kode berdasarkan design Specialist, penulisan unit test, perbaikan bug teknis, manajemen environment variables.
+- **SHOULD NOT handle**: Pengambilan keputusan strategis logic bisnis, perubahan arsitektur global, desain UX.
+- **Routing Examples**: Implementasi logic reward yang sudah didesain -> ditulis dan diuji oleh Backend Executor.
+- **Overlap Warning**: Jangan merubah logic bisnis tanpa persetujuan dari Backend Specialist atau Orchestrator.
+
+---
+
+## 8. UX_RETENTION
 
 **Core Responsibility**: Penjaga kebahagiaan dan loyalitas pengguna.
 **Primary Focus**: Psikologi user, habit formation, dan pencegahan churn.
@@ -115,7 +129,7 @@ Jika sebuah agent mulai melakukan pekerjaan yang bukan keahliannya, ia harus seg
 
 ---
 
-## 8. INTERACTION_DESIGNER
+## 9. INTERACTION_DESIGNER
 
 **Core Responsibility**: Arsitek alur gerakan user.
 **Primary Focus**: Desain tombol, hierarki navigasi, dan efisiensi klik.
@@ -132,6 +146,7 @@ Jika sebuah agent mulai melakukan pekerjaan yang bukan keahliannya, ia harus seg
 1.  **Check the Map First**: Sebelum mengambil task, lihat apakah domain tersebut milik agent lain.
 2.  **Hand-off Policy**: Jika task menyentuh domain lain, lakukan serah terima resmi melalui Orchestrator.
 3.  **No Double Ownership**: Satu file atau fungsi tidak boleh dimiliki oleh dua agent sekaligus dalam satu siklus pengerjaan.
+4.  **Reasoning vs Execution**: Pisahkan fase "Berpikir" (Specialist) dan "Melakukan" (Executor). Jangan biarkan Executor merubah rencana tanpa validasi Specialist.
 
 ---
 
@@ -150,6 +165,7 @@ Agent harus berhenti bekerja dan melapor ke Orchestrator jika:
 - **The "Jack of all Trades" Agent**: Agent yang mencoba memperbaiki segalanya sekaligus.
 - **Silent Overlap**: Agent diam-diam merubah file milik domain lain tanpa melapor.
 - **Role Drift**: Perlahan-lahan agent mengambil tanggung jawab agent lain karena merasa "lebih tahu".
+- **Backend Congestion**: Menyerahkan logic kompleks langsung ke Executor tanpa melalui fase Specialist.
 
 ---
 
